@@ -10,4 +10,13 @@ public class Response {
     private Object data;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private Paginate paginate;
+
+    public Response(int code, String message){
+        this.code = code;
+        this.message = message;
+    }
+
+    public Response() {
+        
+    }
 }
