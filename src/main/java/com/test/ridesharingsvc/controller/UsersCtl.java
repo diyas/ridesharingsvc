@@ -94,7 +94,7 @@ public class UsersCtl {
 
     @GetMapping("/users/{username}")
     public Response getUserByUserId(@PathVariable(value = "username") String userName){
-        User result = users.findByUserName(userName).orElseThrow(()-> new NotFound("Not Found"));;
+        User result = users.findByUserName(userName).orElseThrow(()-> new NotFound("Not Found"));
         Response resp = new Response();
         resp.setCode(httpResponse.getStatus());
         resp.setMessage("");

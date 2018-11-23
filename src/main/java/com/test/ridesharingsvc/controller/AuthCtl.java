@@ -75,7 +75,7 @@ public class AuthCtl {
 
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
 
-        Role userRole = roleRepository.findByName(RoleName.USER)
+        Role userRole = roleRepository.findByName(RoleName.DRIVER)
                 .orElseThrow(() -> new AppException("User Role not set."));
 
         user.setRoles(Collections.singleton(userRole));

@@ -8,15 +8,26 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
+import java.util.Collection;
+
 
 public class Utility {
 
-    public static  String getUserLogin(){
+    protected Authentication getAuth(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            String currentUserName = authentication.getName();
-            return currentUserName;
+            return authentication;
         }
-        return "";
+        return null;
+    }
+
+    public static String getRoleLogin(){
+        Collection<?> coll = new Utility().getAuth().getAuthorities();
+        return coll.toArray()[0].toString();
+    }
+
+    public static String getUserLogin(){
+        String userName = new Utility().getAuth().getName();
+        return userName;
     }
 }
