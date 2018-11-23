@@ -16,9 +16,10 @@ import java.util.Set;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
     @Column(name = "user_id")
-    private String userId;
+    private long userId;
+    @Column(name = "username")
+    private String userName;
     private String name;
     private String email;
     private String password;

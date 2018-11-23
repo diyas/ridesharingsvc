@@ -30,7 +30,7 @@ public class UsersCtl {
     @PostMapping("/users")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user){
         HttpStatus status;
-        if (users.existsByUserId(user.getUserId())){
+        if (users.existsByUserName(user.getUserName())){
             status = HttpStatus.BAD_REQUEST;
             Response resp = new Response();
             resp.setCode(status.value());
@@ -43,7 +43,7 @@ public class UsersCtl {
         Response resp = new Response();
         resp.setCode(status.value());
         resp.setMessage("");
-        resp.setData(new RegisterResponse(result.getId()));
+        resp.setData(new RegisterResponse(result.getUserId()));
         return new ResponseEntity(resp, status);
     }
 
@@ -62,7 +62,7 @@ public class UsersCtl {
     }
 
     @PutMapping("/users/{userid}/{status}")
-    public Response updateStatusUser(@PathVariable(value = "userid") String userId, @PathVariable(value = "status") String status){
+    public Response updateStatusUser(@PathVariable(value = "userid") Long userId, @PathVariable(value = "status") String status){
         User result = users.findByUserId(userId);
         result.setStsUsr(status);
         User updateUser = users.save(result);
@@ -92,9 +92,9 @@ public class UsersCtl {
         return resp;
     }
 
-    @GetMapping("/users/{userid}")
-    public Response getUserByUserId(@PathVariable(value = "userid") String userId){
-        User result = users.findByUserId(userId);
+    @GetMapping("/users/{username}")
+    public Response getUserByUserId(@PathVariable(value = "username") String userName){
+        User result = users.findByUserName(userName).orElseThrow(()-> new NotFound("Not Found"));;
         Response resp = new Response();
         resp.setCode(httpResponse.getStatus());
         resp.setMessage("");
@@ -102,9 +102,9 @@ public class UsersCtl {
         return resp;
     }
 
-    @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable(value = "id") Long id){
-        User result = users.findById(id).orElseThrow(()-> new NotFound("Not Found"));
+    @DeleteMapping("/users/{userid}")
+    public ResponseEntity<?> deleteUser(@PathVariable(value = "userid") String userId){
+        User result = users.findByUserName(userId).orElseThrow(()-> new NotFound("Not Found"));
         users.delete(result);
         HttpStatus status = HttpStatus.OK;
         Response resp = new Response();

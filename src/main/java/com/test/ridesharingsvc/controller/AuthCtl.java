@@ -4,10 +4,7 @@ import com.test.ridesharingsvc.exception.AppException;
 import com.test.ridesharingsvc.model.Role;
 import com.test.ridesharingsvc.model.RoleName;
 import com.test.ridesharingsvc.model.User;
-import com.test.ridesharingsvc.model.payload.JwtAuthenticationResponse;
-import com.test.ridesharingsvc.model.payload.LoginRequest;
-import com.test.ridesharingsvc.model.payload.LoginResponse;
-import com.test.ridesharingsvc.model.payload.Response;
+import com.test.ridesharingsvc.model.payload.*;
 import com.test.ridesharingsvc.repository.RoleRepo;
 import com.test.ridesharingsvc.repository.UsersRepo;
 import com.test.ridesharingsvc.security.JwtTokenProvider;
@@ -57,12 +54,12 @@ public class AuthCtl {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(jwt));
+        return ResponseEntity.ok(new Response(HttpStatus.OK.value(), "Token Generated.", new JwtAuthenticationResponse(jwt)));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User signUpRequest) {
-        if (userRepository.existsByUserId(signUpRequest.getUserId())) {
+        if (userRepository.existsByUserName(signUpRequest.getUserName())) {
             return new ResponseEntity(new Response(HttpStatus.BAD_REQUEST.value(), "Username is already taken!"), HttpStatus.BAD_REQUEST);
         }
 
@@ -73,7 +70,7 @@ public class AuthCtl {
         // Creating user's account
         User user = new User();
         user.setName(signUpRequest.getName());
-        user.setUserId(signUpRequest.getUserId());
+        user.setUserName(signUpRequest.getUserName());
         user.setEmail(signUpRequest.getEmail());
 
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
@@ -91,28 +88,4 @@ public class AuthCtl {
         return ResponseEntity.created(location).body(new Response(HttpStatus.OK.value(), "User registered successfully"));
     }
 
-    @PostMapping("/signin_user")
-    public ResponseEntity<?> userSignIn(@RequestBody User user){
-        User result = userRepository.findByUserIdAndPassword(user.getUserId(), user.getPassword());
-        int code = 200;
-        String message = "";
-        LoginResponse loginResponse = new LoginResponse(true);
-        if (result == null){
-            code = 400;
-            message = "Gagal Login!";
-            loginResponse.setLogin(false);
-        }
-//        if (result.getRoleId() == "DRIVER"){
-//
-//        } else if(result.getRoleId() == "ADMIN"){
-//
-//        } else {
-//
-//        }
-        Response resp = new Response();
-        resp.setCode(code);
-        resp.setMessage(message);
-        resp.setData(loginResponse);
-        return new ResponseEntity(resp, HttpStatus.resolve(code));
-    }
 }
