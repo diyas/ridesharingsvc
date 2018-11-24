@@ -1,14 +1,10 @@
 package com.test.ridesharingsvc.controller;
 
-import com.test.ridesharingsvc.exception.AppException;
-import com.test.ridesharingsvc.exception.NotFound;
 import com.test.ridesharingsvc.model.Order;
-import com.test.ridesharingsvc.model.Role;
 import com.test.ridesharingsvc.model.RoleName;
 import com.test.ridesharingsvc.model.payload.Response;
 import com.test.ridesharingsvc.repository.OrderRepo;
 import com.test.ridesharingsvc.utility.Utility;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +33,7 @@ public class OrderCtl {
     @PostMapping("/order")
     public ResponseEntity<?> postOrder(@RequestBody Order orderReq){
         if (Utility.getRoleLogin() == RoleName.DRIVER.toString()){
-            return new ResponseEntity(new Response(HttpStatus.BAD_REQUEST.value(), "Access Denied!"), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(new Response(HttpStatus.BAD_REQUEST.value(), "Access Denied!"));
         }
         Order order = new Order();
         order.setUserId(Utility.getUserLogin());
@@ -47,6 +43,6 @@ public class OrderCtl {
         order.setLonTo("");
         order.setStsOrder("");
         orderRepo.save(order);
-        return ResponseEntity.ok(new Response(200,""));
+        return ResponseEntity.ok(new Response(HttpStatus.OK.value(),""));
     }
 }

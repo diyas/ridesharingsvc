@@ -1,9 +1,7 @@
 package com.test.ridesharingsvc.model;
 
 
-import lombok.Builder;
 import lombok.Data;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.io.Serializable;
