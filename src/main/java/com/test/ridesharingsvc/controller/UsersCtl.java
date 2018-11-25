@@ -6,6 +6,7 @@ import com.test.ridesharingsvc.model.payload.Paginate;
 import com.test.ridesharingsvc.model.payload.RegisterResponse;
 import com.test.ridesharingsvc.model.payload.Response;
 import com.test.ridesharingsvc.repository.UsersRepo;
+import com.test.ridesharingsvc.utility.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -61,9 +62,10 @@ public class UsersCtl {
         return resp;
     }
 
-    @PutMapping("/users/{userid}/{status}")
-    public Response updateStatusUser(@PathVariable(value = "userid") Long userId, @PathVariable(value = "status") String status){
-        User result = users.findByUserId(userId);
+    @PutMapping("/users/{status}")
+    public Response updateStatusUser(@PathVariable(value = "status") String status){
+        Long userId = Utility.getUserId(users);
+        User result = users.findByUserId(userId).orElseThrow(()-> new NotFound("Not Found"));
         result.setStsUsr(status);
         User updateUser = users.save(result);
         Response resp = new Response();

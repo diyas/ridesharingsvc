@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class RegisterResponse {
-    private long id;
+    private Long id;
 
-    public RegisterResponse(long id){
+    public RegisterResponse(Long id){
         this.id = id;
     }
 }

@@ -1,7 +1,6 @@
 package com.test.ridesharingsvc.model;
 
 import lombok.Data;
-import org.springframework.context.annotation.Primary;
 
 import javax.persistence.*;
 
@@ -13,9 +12,9 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_id")
-    private int orderId;
+    private Long orderId;
     @Column(name = "user_id")
-    private String userId;
+    private Long userId;
     private String note;
     @Column(name = "lat_from")
     private String latFrom;

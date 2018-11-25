@@ -1,9 +1,7 @@
 package com.test.ridesharingsvc.utility;
 
-import com.test.ridesharingsvc.model.User;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import com.test.ridesharingsvc.exception.NotFound;
+import com.test.ridesharingsvc.repository.UsersRepo;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,5 +27,9 @@ public class Utility {
     public static String getUserLogin(){
         String userName = new Utility().getAuth().getName();
         return userName;
+    }
+
+    public static Long getUserId(UsersRepo repo){
+        return repo.findByUserName(getUserLogin()).orElseThrow(()-> new NotFound("Not Found")).getUserId();
     }
 }
