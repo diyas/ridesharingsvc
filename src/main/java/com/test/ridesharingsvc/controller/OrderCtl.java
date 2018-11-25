@@ -2,8 +2,11 @@ package com.test.ridesharingsvc.controller;
 
 import com.test.ridesharingsvc.exception.NotFound;
 import com.test.ridesharingsvc.model.Order;
+import com.test.ridesharingsvc.model.OrdersLog;
 import com.test.ridesharingsvc.model.RoleName;
+import com.test.ridesharingsvc.model.payload.RegisterResponse;
 import com.test.ridesharingsvc.model.payload.Response;
+import com.test.ridesharingsvc.repository.OrderLogRepo;
 import com.test.ridesharingsvc.repository.OrderRepo;
 import com.test.ridesharingsvc.repository.UsersRepo;
 import com.test.ridesharingsvc.services.MapQuestService;
@@ -15,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,7 +27,13 @@ import java.util.List;
 public class OrderCtl {
 
     @Autowired
+    HttpServletResponse httpResponse;
+
+    @Autowired
     OrderRepo orderRepo;
+
+    @Autowired
+    OrderLogRepo orderLogRepo;
 
     @Autowired
     UsersRepo usersRepo;
@@ -44,15 +54,41 @@ public class OrderCtl {
         if (Utility.getRoleLogin() == RoleName.DRIVER.toString()){
             return ResponseEntity.badRequest().body(new Response(HttpStatus.BAD_REQUEST.value(), "Access Denied!"));
         }
-        Long userId = usersRepo.findByUserName(Utility.getUserLogin()).orElseThrow(()-> new NotFound("Not Found")).getUserId();
-        Order order = new Order();
-        order.setUserId(userId);
-        order.setLatFrom("");
-        order.setLonFrom("");
-        order.setLatTo("");
-        order.setLonTo("");
-        order.setStsOrder("");
-        orderRepo.save(order);
-        return ResponseEntity.ok(new Response(HttpStatus.OK.value(),""));
+        Long userId = Utility.getUserId(usersRepo);
+//        OrdersLog log = new OrdersLog();
+//        log.setStatusOrder(orderReq.getStsOrder());
+//        log.setOrder(orderReq);
+//        orderLogRepo.save(log);
+        Order result = usersRepo.findByUserId(userId).map(user -> {
+            orderReq.setUsers(user);
+            return orderRepo.save(orderReq);
+        }).orElseThrow(() -> new NotFound(""));
+        Response resp = new Response();
+        resp.setCode(httpResponse.getStatus());
+        resp.setMessage("Success");
+        resp.setData(new RegisterResponse(result.getOrderId()));
+        return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
+    }
+
+    @PutMapping("/order/{order_id}/{status}")
+    public ResponseEntity<?> updateStatusOrder(@PathVariable(value = "order_id") Long orderId, @PathVariable(value = "status") String status){
+        Long userId = Utility.getUserId(usersRepo);
+        if(!usersRepo.existsById(userId)) {
+            throw new NotFound("UserId " + userId + " not found");
+        }
+//        Order result = orderRepo.findById(orderId).orElseThrow(()-> new NotFound("Not Found"));
+//        result.setStsOrder(status);
+        OrdersLog log = new OrdersLog();
+        log.setStatusOrder(status);
+        //Order updateStatus = orderRepo.save(result);
+        OrdersLog resultLog = orderRepo.findById(orderId).map(order -> {
+            log.setOrder(order);
+            return orderLogRepo.save(log);
+        }).orElseThrow(() -> new NotFound(""));
+        Response resp = new Response();
+        resp.setCode(httpResponse.getStatus());
+        resp.setMessage("Success");
+        resp.setData(resultLog);
+        return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
     }
 }

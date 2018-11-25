@@ -32,4 +32,11 @@ public class Utility {
     public static Long getUserId(UsersRepo repo){
         return repo.findByUserName(getUserLogin()).orElseThrow(()-> new NotFound("Not Found")).getUserId();
     }
+
+//    public static ResponseEntity<?> isAccess(String role){
+//        if (Utility.getRoleLogin() == role){
+//            return ResponseEntity.badRequest().body(new Response(HttpStatus.BAD_REQUEST.value(), "Access Denied!"));
+//        }
+//        re
+//    }
 }

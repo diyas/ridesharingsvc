@@ -42,14 +42,14 @@ public class UsersCtl {
         status = HttpStatus.OK;
         User result = users.save(user);
         Response resp = new Response();
-        resp.setCode(status.value());
+        resp.setCode(httpResponse.getStatus());
         resp.setMessage("");
         resp.setData(new RegisterResponse(result.getUserId()));
-        return new ResponseEntity(resp, status);
+        return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
     }
 
     @PutMapping("/users/{id}")
-    public Response updateUser(@PathVariable(value = "id") long id, @Valid @RequestBody User user){
+    public ResponseEntity<?> updateUser(@PathVariable(value = "id") long id, @Valid @RequestBody User user){
         User result = users.findById(id).orElseThrow(()-> new NotFound("Not Found"));
         result.setName(user.getName());
         result.setEmail(user.getEmail());
@@ -59,11 +59,11 @@ public class UsersCtl {
         resp.setCode(httpResponse.getStatus());
         resp.setMessage("");
         resp.setData(updateUser);
-        return resp;
+        return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
     }
 
     @PutMapping("/users/{status}")
-    public Response updateStatusUser(@PathVariable(value = "status") String status){
+    public ResponseEntity<?> updateStatusUser(@PathVariable(value = "status") String status){
         Long userId = Utility.getUserId(users);
         User result = users.findByUserId(userId).orElseThrow(()-> new NotFound("Not Found"));
         result.setStsUsr(status);
@@ -72,11 +72,11 @@ public class UsersCtl {
         resp.setCode(httpResponse.getStatus());
         resp.setMessage("");
         resp.setData(updateUser);
-        return resp;
+        return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
     }
 
     @GetMapping("/users")
-    public Response getAllUsers(@RequestParam(value = "limit", defaultValue = "10") int limit, @RequestParam(value = "page", defaultValue = "1") int page){
+    public ResponseEntity<?> getAllUsers(@RequestParam(value = "limit", defaultValue = "10") int limit, @RequestParam(value = "page", defaultValue = "1") int page){
         Pageable pageable = PageRequest.of(page - 1, limit);
         Page<User> result = users.findAll(pageable);
         long totalData = result.getTotalElements();
@@ -91,17 +91,17 @@ public class UsersCtl {
         resp.setMessage("");
         resp.setData(result.getContent());
         resp.setPaginate(paginate);
-        return resp;
+        return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
     }
 
     @GetMapping("/users/{username}")
-    public Response getUserByUserId(@PathVariable(value = "username") String userName){
+    public ResponseEntity<?> getUserByUserId(@PathVariable(value = "username") String userName){
         User result = users.findByUserName(userName).orElseThrow(()-> new NotFound("Not Found"));
         Response resp = new Response();
         resp.setCode(httpResponse.getStatus());
         resp.setMessage("");
         resp.setData(result);
-        return resp;
+        return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
     }
 
     @DeleteMapping("/users/{userid}")
@@ -110,9 +110,9 @@ public class UsersCtl {
         users.delete(result);
         HttpStatus status = HttpStatus.OK;
         Response resp = new Response();
-        resp.setCode(status.value());
+        resp.setCode(httpResponse.getStatus());
         resp.setMessage("Deleted UserID " + result.getUserId());
         resp.setData(result);
-        return new ResponseEntity(resp, status);
+        return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
     }
 }

@@ -2,11 +2,14 @@ Requirement:
 - Springboot
 - Tomcat
 - Mysql
+- Create Database "ride_sharing"
 
 1. (Connection) As a Driver, I can connect to Ride Sharing system
+    #Register
 	URL:http://localhost:8080/api/auth/register_driver
 	Method: POST
 	Parameter: Body
+
 ```json
 
 {
@@ -16,9 +19,11 @@ Requirement:
 "password":"String"
 }
 ```
+    #Login
 	URL:http://localhost:8080/api/auth/signin
 	Method: POST
 	Parameter: Body
+
 ```json
 {
 "userName":"String",
@@ -27,9 +32,11 @@ Requirement:
 
 ```
 2. (Connection) As a Passenger, I can connect to Ride Sharing system
-	URL:http://localhost:8080/api/auth/signup
+    #Register
+	URL:http://localhost:8080/api/auth/register_driver
 	Method: POST
 	Parameter: Body
+
 ```json
 {
 "userName":"String",
@@ -38,9 +45,11 @@ Requirement:
 "password":"String"
 }
 ```
+    #Login
 	URL:http://localhost:8080/api/auth/signin
 	Method: POST
 	Parameter: Body
+
 ```json
 {
 "userName":"String",
@@ -52,9 +61,11 @@ Requirement:
 4. (Connection) As a Passenger, I can send my presence to Ride Sharing system
 
 5. (Pairing) As a Passenger, I can send requests to Driver
+
 	URL:http://localhost:8080/api/order
 	Method: POST
 	Parameter: Body
+
 ```json
 {
 "latFrom":"String",
@@ -71,4 +82,13 @@ Requirement:
 9. (Approaching) As a Driver, I can send my location
 10. (Approaching) As a Passenger, I can receive Driver location
 11. (Driving) As a Driver, I can start the trip
+
+    URL:http://localhost:8080/api/order/{order_id}/{status}"
+	Method: PUT
+	Parameter: Template
+
 12. (Driving) As a Driver, I can end the trip
+
+    URL:http://localhost:8080/api/order/{order_id}/{status}"
+	Method: PUT
+	Parameter: Template

@@ -36,25 +36,18 @@ public class AddressCtl {
     @PostMapping("/address")
     public ResponseEntity<?> saveAddress(@Valid @RequestBody Address address){
         HttpStatus status;
-//        if (addressRepo.existsById(address.getAddressId())){
-//            status = HttpStatus.BAD_REQUEST;
-//            Response resp = new Response();
-//            resp.setCode(status.value());
-//            resp.setMessage("Alamat sudah ada!");
-//            return new ResponseEntity(resp, status);
-//        }
 
         Long userId = Utility.getUserId(userRepo);
         status = HttpStatus.OK;
         Address result = userRepo.findByUserId(userId).map(user -> {
             address.setUsers(user);
             return addressRepo.save(address);
-        }).orElseThrow(() -> new NotFound(""));;
+        }).orElseThrow(() -> new NotFound(""));
         Response resp = new Response();
-        resp.setCode(status.value());
+        resp.setCode(httpResponse.getStatus());
         resp.setMessage("Success");
         resp.setData(new RegisterResponse(result.getAddressId()));
-        return new ResponseEntity(resp, status);
+        return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
     }
 
     @PutMapping("/address/{address_id}")
@@ -75,11 +68,11 @@ public class AddressCtl {
         resp.setCode(httpResponse.getStatus());
         resp.setMessage("");
         resp.setData(updateUser);
-        return ResponseEntity.ok(resp);
+        return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
     }
 
     @GetMapping("/address")
-    public Response getAllAddress(@RequestParam(value = "limit", defaultValue = "10") int limit, @RequestParam(value = "page", defaultValue = "1") int page){
+    public ResponseEntity<?> getAllAddress(@RequestParam(value = "limit", defaultValue = "10") int limit, @RequestParam(value = "page", defaultValue = "1") int page){
         Long userId = Utility.getUserId(userRepo);
         Pageable pageable = PageRequest.of(page - 1, limit);
         Optional<User> user = userRepo.findByUserId(userId);
@@ -96,7 +89,7 @@ public class AddressCtl {
         resp.setMessage("");
         resp.setData(result.getContent());
         resp.setPaginate(paginate);
-        return resp;
+        return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
     }
 
     @DeleteMapping("/address/{address_id}")
@@ -106,9 +99,13 @@ public class AddressCtl {
             throw new NotFound("UserId " + userId + " not found");
         }
 
-        return addressRepo.findById(addressId).map(address -> {
-            addressRepo.delete(address);
-            return ResponseEntity.ok().build();
-        }).orElseThrow(() -> new NotFound("AddressId " + addressId + " not found"));
+        Address result = addressRepo.findById(addressId).orElseThrow(()-> new NotFound("Not Found"));
+        addressRepo.delete(result);
+        HttpStatus status = HttpStatus.OK;
+        Response resp = new Response();
+        resp.setCode(status.value());
+        resp.setMessage("Deleted AddressId " + result.getAddressId());
+        resp.setData(result);
+        return new ResponseEntity(resp, status);
     }
 }
