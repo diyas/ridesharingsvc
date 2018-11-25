@@ -8,12 +8,11 @@ Requirement:
 	Method: POST
 	Parameter: Body
 ```json
-
 {
-	"userName":"driver901",
-	"name":"Raskha Algahasi Adhyasta",
-	"email":"driver.901@gmail.com",
-	"password":"123456"
+	"userName":"String",
+	"name":"String",
+	"email":"String",
+	"password":"String"
 }
 ```
 	URL:http://localhost:8080/api/auth/signin
@@ -21,7 +20,8 @@ Requirement:
 	Parameter: Body
 ```json
 
-{userName":"String",
+{
+"userName":"String",
 "password":"String"
 }
 
@@ -32,7 +32,7 @@ Requirement:
 	Parameter: Body
 ```json
 
-{userName":"String",
+{"userName":"String",
 	"password":"String"
 }
 
@@ -42,7 +42,7 @@ Requirement:
 	Parameter: Body
 ```json
 
-{userName":"String",
+{"userName":"String",
 "password":"String"
 }
 
