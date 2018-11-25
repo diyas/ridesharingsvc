@@ -3,6 +3,13 @@ Requirement:
 - Tomcat
 - Mysql
 - Create Database "ride_sharing"
+- Execute Query
+
+INSERT INTO `ride_sharing`.`roles` (`role_id`, `name`) VALUES ('1', 'ADMIN');
+INSERT INTO `ride_sharing`.`roles` (`role_id`, `name`) VALUES ('2', 'DRIVER');
+INSERT INTO `ride_sharing`.`roles` (`role_id`, `name`) VALUES ('3', 'USER');
+
+
 
 1. (Connection) As a Driver, I can connect to Ride Sharing system
     #Register
