@@ -30,6 +30,7 @@ INSERT INTO `ride_sharing`.`roles` (`role_id`, `name`) VALUES ('3', 'USER');
 	URL:http://localhost:8080/api/auth/signin
 	Method: POST
 	Parameter: Body
+	Response: Token
 
 ```json
 {
@@ -56,6 +57,7 @@ INSERT INTO `ride_sharing`.`roles` (`role_id`, `name`) VALUES ('3', 'USER');
 	URL:http://localhost:8080/api/auth/signin
 	Method: POST
 	Parameter: Body
+	Response: Token
 
 ```json
 {
@@ -72,6 +74,7 @@ INSERT INTO `ride_sharing`.`roles` (`role_id`, `name`) VALUES ('3', 'USER');
 	URL:http://localhost:8080/api/order
 	Method: POST
 	Parameter: Body
+	Authorization: Header(Bearer Token)
 
 ```json
 {
@@ -93,9 +96,11 @@ INSERT INTO `ride_sharing`.`roles` (`role_id`, `name`) VALUES ('3', 'USER');
     URL:http://localhost:8080/api/order/{order_id}/{status}"
 	Method: PUT
 	Parameter: Template
+	Authorization: Header(Bearer Token)
 
 12. (Driving) As a Driver, I can end the trip
 
     URL:http://localhost:8080/api/order/{order_id}/{status}"
 	Method: PUT
 	Parameter: Template
+	Authorization: Header(Bearer Token)
