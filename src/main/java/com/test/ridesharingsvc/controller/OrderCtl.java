@@ -2,7 +2,6 @@ package com.test.ridesharingsvc.controller;
 
 import com.test.ridesharingsvc.exception.NotFound;
 import com.test.ridesharingsvc.model.Order;
-import com.test.ridesharingsvc.model.OrdersLog;
 import com.test.ridesharingsvc.model.RoleName;
 import com.test.ridesharingsvc.model.payload.RegisterResponse;
 import com.test.ridesharingsvc.model.payload.Response;
@@ -55,10 +54,6 @@ public class OrderCtl {
             return ResponseEntity.badRequest().body(new Response(HttpStatus.BAD_REQUEST.value(), "Access Denied!"));
         }
         Long userId = Utility.getUserId(usersRepo);
-//        OrdersLog log = new OrdersLog();
-//        log.setStatusOrder(orderReq.getStsOrder());
-//        log.setOrder(orderReq);
-//        orderLogRepo.save(log);
         Order result = usersRepo.findByUserId(userId).map(user -> {
             orderReq.setUsers(user);
             return orderRepo.save(orderReq);
@@ -76,19 +71,16 @@ public class OrderCtl {
         if(!usersRepo.existsById(userId)) {
             throw new NotFound("UserId " + userId + " not found");
         }
-//        Order result = orderRepo.findById(orderId).orElseThrow(()-> new NotFound("Not Found"));
-//        result.setStsOrder(status);
-        OrdersLog log = new OrdersLog();
-        log.setStatusOrder(status);
-        //Order updateStatus = orderRepo.save(result);
-        OrdersLog resultLog = orderRepo.findById(orderId).map(order -> {
-            log.setOrder(order);
-            return orderLogRepo.save(log);
+        Order order = orderRepo.findById(orderId).orElseThrow(()-> new NotFound("Not Found"));
+        order.setStsOrder(status);
+        Order result = usersRepo.findByUserId(userId).map(user -> {
+            order.setUsers(user);
+            return orderRepo.save(order);
         }).orElseThrow(() -> new NotFound(""));
         Response resp = new Response();
         resp.setCode(httpResponse.getStatus());
         resp.setMessage("Success");
-        resp.setData(resultLog);
+        resp.setData(result);
         return new ResponseEntity(resp, HttpStatus.resolve(httpResponse.getStatus()));
     }
 }
